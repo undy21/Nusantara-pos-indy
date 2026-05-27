@@ -1,0 +1,6 @@
+{
+  "name": "Nusantara POS",
+  "description": "Aplikasi Web Point of Sale (POS) cerdas untuk Nusantara POS cabang Lahat dan Pagar Alam. Menawarkan sinkronisasi multi-cabang Google Sheets dan asisten kecerdasan bisnis Gemini AI.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
