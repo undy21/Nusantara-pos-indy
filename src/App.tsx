@@ -156,8 +156,10 @@ export default function App() {
 
   useEffect(() => {
     let savedUrl = localStorage.getItem('GAS_DEPLOYMENT_URL');
-    if (!savedUrl) {
-      savedUrl = ((import.meta as any).env.VITE_GAS_DEPLOYMENT_URL as string) || '';
+    const envUrl = ((import.meta as any).env.VITE_GAS_DEPLOYMENT_URL as string) || '';
+    
+    if (!savedUrl || (envUrl && savedUrl !== envUrl && !localStorage.getItem('GAS_URL_MANUALLY_OVERRIDDEN'))) {
+      savedUrl = envUrl;
       if (savedUrl) {
         localStorage.setItem('GAS_DEPLOYMENT_URL', savedUrl);
         localStorage.setItem('pos_apps_script_url', savedUrl);
@@ -171,6 +173,7 @@ export default function App() {
   const handleUpdateGasUrl = (url: string) => {
     setGasDeploymentUrl(url);
     localStorage.setItem('GAS_DEPLOYMENT_URL', url);
+    localStorage.setItem('GAS_URL_MANUALLY_OVERRIDDEN', 'true');
     api.setGasUrl(url);
     loadAllData();
   };
