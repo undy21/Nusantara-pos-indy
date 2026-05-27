@@ -271,7 +271,7 @@ export default function CashierView({
   };
 
   return (
-    <div className="flex-1 flex flex-col md:flex-row bg-slate-100 overflow-hidden h-full" id="cashier_layout">
+    <div className="flex-1 flex flex-col md:flex-row bg-slate-100 overflow-y-auto md:overflow-hidden h-full" id="cashier_layout">
       
       {/* LEFT SECTION: Search & item options board */}
       <div className="flex-1 flex flex-col p-5 space-y-4 overflow-y-auto">
@@ -390,7 +390,7 @@ export default function CashierView({
       </div>
 
       {/* RIGHT SIDEBAR: Shopping Cart and Checkout board */}
-      <div className="w-full md:w-96 bg-white border-l border-slate-200 shadow-lg flex flex-col justify-between h-full shrink-0" id="cart_sidebar">
+      <div className="w-full md:w-96 bg-white border-t md:border-t-0 md:border-l border-slate-200 shadow-lg flex flex-col justify-between h-auto md:h-full shrink-0" id="cart_sidebar">
         
         {/* Cart items list strip */}
         <div className="p-4 border-b border-slate-100 flex items-center justify-between shrink-0">

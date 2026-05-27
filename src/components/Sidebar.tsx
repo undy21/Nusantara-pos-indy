@@ -13,7 +13,8 @@ import {
   LogOut,
   ChevronRight,
   User as UserIcon,
-  Bell
+  Bell,
+  X
 } from 'lucide-react';
 import { Role, User } from '../types';
 
@@ -25,6 +26,8 @@ interface SidebarProps {
   notificationsCount: number;
   onOpenNotifications: () => void;
   activeBranchName: string;
+  isMobileMenuOpen: boolean;
+  setIsMobileMenuOpen: (open: boolean) => void;
 }
 
 export default function Sidebar({ 
@@ -34,7 +37,9 @@ export default function Sidebar({
   onLogout,
   notificationsCount,
   onOpenNotifications,
-  activeBranchName
+  activeBranchName,
+  isMobileMenuOpen,
+  setIsMobileMenuOpen
 }: SidebarProps) {
   
   const menuItems = [
@@ -54,67 +59,94 @@ export default function Sidebar({
   );
 
   return (
-    <aside className="w-64 bg-slate-900 text-slate-100 flex flex-col h-full shrink-0 border-r border-slate-800 shadow-xl" id="pos_sidebar">
-      {/* Brand Header */}
-      <div className="p-5 border-b border-slate-800 flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-bold tracking-tight bg-gradient-to-r from-indigo-400 to-sky-400 bg-clip-text text-transparent">
-            NUSANTARA POS
-          </h1>
-          <p className="text-[10px] text-indigo-400 font-mono mt-0.5 uppercase tracking-wide">
-            {localStorage.getItem('pos_apps_script_url') ? 'Google Sheets Cloud' : 'Server JSON Database'}
-          </p>
-        </div>
-        
-        {/* Branch Info Badge */}
-        <div className="flex items-center relative">
-          <button 
-            onClick={onOpenNotifications}
-            className="p-1 px-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 relative transition-colors cursor-pointer"
-            title="Notifikasi"
-            id="notif_bell_btn"
-          >
-            <Bell className="w-4 h-4" />
-            {notificationsCount > 0 && (
-              <span className="absolute -top-1 -right-1 bg-rose-500 text-[10px] text-white font-bold w-4 h-4 rounded-full flex items-center justify-center animate-pulse">
-                {notificationsCount}
-              </span>
-            )}
-          </button>
-        </div>
-      </div>
+    <>
+      {/* Mobile overlay backdrop */}
+      {isMobileMenuOpen && (
+        <div 
+          className="fixed inset-0 bg-slate-950/60 z-40 md:hidden backdrop-blur-xs transition-opacity duration-300"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
 
-      {/* Cabang Badge Area */}
-      <div className="px-4 py-2 bg-slate-950/50 border-b border-slate-800/40 flex items-center justify-between text-xs">
-        <span className="text-slate-500">Cabang Aktif:</span>
-        <span className="text-indigo-400 font-medium truncate max-w-[130px]">{activeBranchName}</span>
-      </div>
-
-      {/* Navigation Links */}
-      <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
-        {allowedItems.map((item) => {
-          const Icon = item.icon;
-          const isActive = activeTab === item.id;
-          return (
-            <button
-              key={item.id}
-              onClick={() => setActiveTab(item.id)}
-              className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-all group cursor-pointer ${
-                isActive 
-                  ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/20' 
-                  : 'text-slate-400 hover:bg-slate-800 hover:text-white'
-              }`}
-              id={`sidebar_link_${item.id}`}
+      <aside 
+        className={`fixed inset-y-0 left-0 z-50 w-64 bg-slate-900 text-slate-100 flex flex-col h-full shrink-0 border-r border-slate-800 shadow-xl transition-transform duration-300 ease-in-out md:static md:translate-x-0 ${
+          isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+        }`} 
+        id="pos_sidebar"
+      >
+        {/* Brand Header */}
+        <div className="p-5 border-b border-slate-800 flex items-center justify-between">
+          <div>
+            <h1 className="text-xl font-bold tracking-tight bg-gradient-to-r from-indigo-400 to-sky-400 bg-clip-text text-transparent">
+              NUSANTARA POS
+            </h1>
+            <p className="text-[10px] text-indigo-400 font-mono mt-0.5 uppercase tracking-wide">
+              {localStorage.getItem('pos_apps_script_url') ? 'Google Sheets Cloud' : 'Server JSON Database'}
+            </p>
+          </div>
+          
+          {/* Branch Info / Actions Badge */}
+          <div className="flex items-center gap-2 relative">
+            <button 
+              onClick={onOpenNotifications}
+              className="p-1 px-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 relative transition-colors cursor-pointer"
+              title="Notifikasi"
+              id="notif_bell_btn"
             >
-              <div className="flex items-center gap-3">
-                <Icon className={`w-4 h-4 transition-transform group-hover:scale-110 ${isActive ? 'text-white' : 'text-slate-400 group-hover:text-indigo-400'}`} />
-                <span>{item.label}</span>
-              </div>
-              {isActive && <ChevronRight className="w-4 h-4 text-white" />}
+              <Bell className="w-4 h-4" />
+              {notificationsCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-rose-500 text-[10px] text-white font-bold w-4 h-4 rounded-full flex items-center justify-center animate-pulse">
+                  {notificationsCount}
+                </span>
+              )}
             </button>
-          );
-        })}
-      </nav>
+
+            {/* Mobile close button */}
+            <button
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="md:hidden p-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors cursor-pointer"
+              title="Tutup Menu"
+              id="close_sidebar_mobile_btn"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+
+        {/* Cabang Badge Area */}
+        <div className="px-4 py-2 bg-slate-950/50 border-b border-slate-800/40 flex items-center justify-between text-xs">
+          <span className="text-slate-500">Cabang Aktif:</span>
+          <span className="text-indigo-400 font-medium truncate max-w-[130px]">{activeBranchName}</span>
+        </div>
+
+        {/* Navigation Links */}
+        <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+          {allowedItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = activeTab === item.id;
+            return (
+              <button
+                key={item.id}
+                onClick={() => {
+                  setActiveTab(item.id);
+                  setIsMobileMenuOpen(false); // Auto-close mobile viewport drawer
+                }}
+                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-all group cursor-pointer ${
+                  isActive 
+                    ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/20' 
+                    : 'text-slate-400 hover:bg-slate-800 hover:text-white'
+                }`}
+                id={`sidebar_link_${item.id}`}
+              >
+                <div className="flex items-center gap-3">
+                  <Icon className={`w-4 h-4 transition-transform group-hover:scale-110 ${isActive ? 'text-white' : 'text-slate-400 group-hover:text-indigo-400'}`} />
+                  <span>{item.label}</span>
+                </div>
+                {isActive && <ChevronRight className="w-4 h-4 text-white" />}
+              </button>
+            );
+          })}
+        </nav>
 
       {/* Active User Panel */}
       <div className="p-4 border-t border-slate-800 bg-slate-950/40 flex flex-col gap-3">
@@ -139,5 +171,6 @@ export default function Sidebar({
         </button>
       </div>
     </aside>
+    </>
   );
 }
